@@ -1,0 +1,64 @@
+name: Generate TTS Audio
+
+on:
+  workflow_dispatch:
+    inputs:
+      bookId:
+        description: 'ID do livro (do Firestore)'
+        required: true
+      chapterId:
+        description: 'ID/Índice do capítulo (0, 1, 2...)'
+        required: true
+      chapterText:
+        description: 'O texto do capítulo para sintetizar'
+        required: true
+
+jobs:
+  generate-audio:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download Piper Model
+        run: |
+          wget https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx -O model.onnx
+          wget https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json -O model.onnx.json
+
+      - name: Generate Audio File
+        run: |
+          mkdir -p audio_output
+          python scripts/generate_audio.py --text "${{ github.event.inputs.chapterText }}" --model "model.onnx" --output_file "audio_output/${{ github.event.inputs.chapterId }}.wav"
+
+      - name: Upload Audio to GitHub LFS
+        id: upload_step
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/upload_to_github.py \
+            --local_file "audio_output/${{ github.event.inputs.chapterId }}.wav" \
+            --repo_owner "AmaDeusAlsoSatan" \
+            --repo_name "bibliovoz-audio-storage" \
+            --dest_path "audio/${{ github.event.inputs.bookId }}/${{ github.event.inputs.chapterId }}.wav" \
+            --github_token "$GITHUB_TOKEN"
+      
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v1'
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SA }}'
+
+      - name: Update Firestore
+        run: |
+          python scripts/update_firestore.py \
+            --book-id "${{ github.event.inputs.bookId }}" \
+            --chapter-id "${{ github.event.inputs.chapterId }}" \
+            --audio-url "${{ steps.upload_step.outputs.audio_url }}"
