@@ -6,9 +6,8 @@ def main():
     parser = argparse.ArgumentParser(description="Gera áudio a partir de texto usando Piper TTS.")
     parser.add_argument("--text", required=True, help="O texto para sintetizar.")
     parser.add_argument("--model", required=True, help="Caminho para o arquivo do modelo .onnx.")
-    parser.add_argument("--output_file", required=True, help="Caminho do arquivo .wav de saída.")
-    # ADICIONE O NOVO ARGUMENTO
     parser.add_argument("--config", required=True, help="Caminho para o arquivo de configuração .json.")
+    parser.add_argument("--output_file", required=True, help="Caminho do arquivo .wav de saída.")
     args = parser.parse_args()
 
     print(f"Carregando modelo: {args.model}")
