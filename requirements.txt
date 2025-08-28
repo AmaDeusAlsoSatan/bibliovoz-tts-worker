@@ -1,5 +1,6 @@
-piper-tts
+TTS # A biblioteca oficial da Coqui
 numpy
 scipy
+google-cloud-storage
 google-cloud-firestore
 requests
