@@ -3,3 +3,5 @@ numpy
 scipy
 google-cloud-firestore
 requests
+fastapi
+uvicorn
