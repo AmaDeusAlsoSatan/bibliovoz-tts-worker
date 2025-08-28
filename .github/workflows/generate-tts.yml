@@ -40,7 +40,8 @@ jobs:
       - name: Upload Audio to GitHub LFS
         id: upload_step
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Usa o nosso token poderoso em vez do padrão
+          GITHUB_TOKEN: ${{ secrets.WORKER_PAT }} 
         run: |
           python scripts/upload_to_github.py \
             --local_file "audio_output/${{ github.event.inputs.chapterId }}.wav" \
