@@ -29,18 +29,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Download Piper Model
-        run: |
-          wget https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx -O model.onnx
-          wget https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json -O model.onnx.json
-
       - name: Generate Audio File
         run: |
           mkdir -p audio_output
+          # A chamada agora é muito mais simples
           python scripts/generate_audio.py \
             --text "${{ github.event.inputs.chapterText }}" \
-            --model "model.onnx" \
-            --config "model.onnx.json" \
             --output_file "audio_output/${{ github.event.inputs.chapterId }}.wav"
 
       - name: Upload Audio to GitHub LFS
