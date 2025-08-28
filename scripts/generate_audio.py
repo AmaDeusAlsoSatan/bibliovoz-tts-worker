@@ -14,7 +14,7 @@ def main():
     print(f"Usando configuração: {args.config}")
     
     # PASSA OS DOIS ARGUMENTOS
-    voice = PiperVoice(args.model, config_path=args.config)
+    voice = PiperVoice(args.model, args.config)
     
     print(f"Gerando áudio para o arquivo: {args.output_file}")
     voice.synthesize_wav_file(args.text, args.output_file)
