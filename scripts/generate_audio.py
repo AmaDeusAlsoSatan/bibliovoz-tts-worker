@@ -15,7 +15,7 @@ def main():
     print(f"Usando configuração: {args.config}")
     
     # Esta sintaxe funcionará com a versão 1.2.0
-    voice = PiperVoice(model_path=args.model, config_path=args.config)
+    voice = PiperVoice(args.model, config_path=args.config)
     
     print(f"Gerando áudio para o arquivo: {args.output_file}")
     
