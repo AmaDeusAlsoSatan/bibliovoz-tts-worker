@@ -1,3 +1,4 @@
+# scripts/generate_audio.py
 import argparse
 import os
 from piper import PiperVoice
@@ -13,11 +14,11 @@ def main():
     print(f"Carregando modelo: {args.model}")
     print(f"Usando configuração: {args.config}")
     
-    voice = PiperVoice(args.model, config_path=args.config) # Revertendo para a sintaxe com nome, que estava correta
+    # Esta sintaxe funcionará com a versão 1.2.0
+    voice = PiperVoice(model_path=args.model, config_path=args.config)
     
     print(f"Gerando áudio para o arquivo: {args.output_file}")
     
-    # --- A CORREÇÃO FINAL ESTÁ AQUI ---
     with open(args.output_file, "wb") as audio_file:
         voice.synthesize(args.text, audio_file)
     
