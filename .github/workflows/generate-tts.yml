@@ -39,8 +39,8 @@ jobs:
           mkdir -p audio_output
           python scripts/generate_audio.py \
             --text "${{ github.event.inputs.chapterText }}" \
-            --model "model.onnx" \
-            --config "model.onnx.json" \
+            --model_path "model.onnx" \
+            --config_path "model.onnx.json" \
             --output_file "audio_output/${{ github.event.inputs.chapterId }}.wav"
 
       - name: Upload Audio to GitHub LFS
