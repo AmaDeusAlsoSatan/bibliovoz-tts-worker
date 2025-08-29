@@ -1,39 +1,40 @@
 name: Generate TTS Audio
+
 on:
   workflow_dispatch:
     inputs:
       bookId:
+        description: 'ID do livro (do Firestore)'
         required: true
       chapterId:
+        description: 'ID/Índice do capítulo (0, 1, 2...)'
         required: true
       chapterText:
+        description: 'O texto do capítulo para sintetizar'
         required: true
-      voiceModel:
-        description: 'O nome do modelo de voz Piper a ser usado'
-        required: true
-        default: 'pt_BR-edresson-medium'
 
 jobs:
   generate-audio:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v3
-        with:
-          lfs: true # Diz ao checkout para baixar os arquivos LFS
+      - name: Checkout repository code
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - run: pip install -r requirements.txt
-      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
       - name: Generate Audio File
         run: |
           mkdir -p audio_output
+          # A chamada agora é muito mais simples
           python scripts/generate_audio.py \
             --text "${{ github.event.inputs.chapterText }}" \
-            --model "models/${{ github.event.inputs.voiceModel }}.onnx" \
-            --config "models/${{ github.event.inputs.voiceModel }}.onnx.json" \
             --output_file "audio_output/${{ github.event.inputs.chapterId }}.wav"
 
       - name: Upload Audio to GitHub LFS

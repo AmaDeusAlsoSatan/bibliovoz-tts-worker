@@ -1,36 +1,23 @@
-# scripts/generate_audio.py
 import argparse
+from TTS.api import TTS
 import os
-import wave
-import json
-import types  # Importa a biblioteca types
-from piper.voice import PiperVoice # Remove a importação de Config
 
 def main():
-    parser = argparse.ArgumentParser(description="Gera áudio com Piper TTS.")
+    parser = argparse.ArgumentParser(description="Gera áudio com a biblioteca TTS da Coqui.")
     parser.add_argument("--text", required=True)
-    parser.add_argument("--model", required=True)
-    parser.add_argument("--config", required=True) 
     parser.add_argument("--output_file", required=True)
     args = parser.parse_args()
 
-    print(f"Carregando modelo Piper: {args.model}")
-
-    # Carrega o arquivo de configuração JSON em um dicionário
-    with open(args.config, "r") as config_file:
-        config_json = json.load(config_file)
+    print("Carregando o modelo TTS pré-treinado para português...")
+    # O nome do modelo oficial da Coqui para português do Brasil
+    model_name = "tts_models/pt/cv/vits"
     
-    # CORREÇÃO: Converte o dicionário JSON em um objeto SimpleNamespace
-    config_obj = types.SimpleNamespace(**config_json)
-
-    # Passa o objeto de configuração correto
-    voice = PiperVoice(args.model, config=config_obj)
-    
+    # A biblioteca TTS lida com o download e o cache do modelo automaticamente
+    tts = TTS(model_name)
     print("Modelo carregado.")
 
-    print(f"Gerando áudio para: {args.output_file}")
-    with wave.open(args.output_file, "wb") as audio_file:
-        voice.synthesize(args.text, audio_file)
+    print(f"Gerando áudio para o arquivo: {args.output_file}")
+    tts.tts_to_file(text=args.text, file_path=args.output_file)
     
     print("Geração de áudio concluída com sucesso.")
 
