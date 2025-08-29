@@ -1,5 +1,4 @@
 name: Generate TTS Audio
-
 on:
   workflow_dispatch:
     inputs:
@@ -9,7 +8,6 @@ on:
         required: true
       chapterText:
         required: true
-      # NOVO INPUT: Recebe o nome do modelo de voz
       voiceModel:
         description: 'O nome do modelo de voz Piper a ser usado'
         required: true
@@ -18,40 +16,24 @@ on:
 jobs:
   generate-audio:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          lfs: true # Diz ao checkout para baixar os arquivos LFS
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Download Piper Model
-        run: |
-          # Monta as URLs dinamicamente baseadas no input
-          VOICE_MODEL="${{ github.event.inputs.voiceModel }}"
-          # Lógica para encontrar o repo correto (pode ser expandida)
-          REPO_URL="https://huggingface.co/rhasspy/piper-voices"
-          if [[ $VOICE_MODEL == *"edresson"* ]]; then
-            REPO_URL="https://huggingface.co/edresson/piper-pt-br-vits"
-          fi
-          
-          echo "Baixando modelo $VOICE_MODEL de $REPO_URL"
-          wget "$REPO_URL/resolve/main/$VOICE_MODEL.onnx" -O model.onnx
-          wget "$REPO_URL/resolve/main/$VOICE_MODEL.onnx.json" -O model.onnx.json
-
+      - run: pip install -r requirements.txt
+      
       - name: Generate Audio File
         run: |
           mkdir -p audio_output
           python scripts/generate_audio.py \
             --text "${{ github.event.inputs.chapterText }}" \
-            --model "model.onnx" \
-            --config "model.onnx.json" \
+            --model "models/${{ github.event.inputs.voiceModel }}.onnx" \
+            --config "models/${{ github.event.inputs.voiceModel }}.onnx.json" \
             --output_file "audio_output/${{ github.event.inputs.chapterId }}.wav"
 
       - name: Upload Audio to GitHub LFS
