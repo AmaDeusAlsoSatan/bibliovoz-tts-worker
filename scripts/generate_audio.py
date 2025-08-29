@@ -2,8 +2,8 @@
 import argparse
 import os
 import wave
-import json  # Importa a biblioteca JSON
-from piper import PiperVoice
+import json
+from piper import PiperVoice, Config  # Importa a classe Config
 
 def main():
     parser = argparse.ArgumentParser(description="Gera áudio com Piper TTS.")
@@ -15,11 +15,14 @@ def main():
 
     print(f"Carregando modelo Piper: {args.model}")
 
-    # CORREÇÃO: Carrega o arquivo de configuração JSON manualmente
+    # Carrega o arquivo de configuração JSON em um dicionário
     with open(args.config, "r") as config_file:
-        config = json.load(config_file)
+        config_json = json.load(config_file)
     
-    # Passa o objeto de configuração carregado com o argumento nomeado 'config'
+    # CORREÇÃO: Cria um objeto Config a partir do dicionário
+    config = Config(**config_json)
+
+    # Passa o objeto de configuração correto
     voice = PiperVoice(args.model, config=config)
     
     print("Modelo carregado.")
