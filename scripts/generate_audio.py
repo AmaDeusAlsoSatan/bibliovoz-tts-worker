@@ -1,25 +1,27 @@
 # scripts/generate_audio.py
 import argparse
-from TTS.api import TTS
 import os
+from piper import PiperVoice
 
 def main():
-    # --- A PARTE QUE FALTAVA ---
-    parser = argparse.ArgumentParser(description="Gera áudio com a biblioteca TTS da Coqui.")
+    parser = argparse.ArgumentParser(description="Gera áudio com Piper TTS.")
     parser.add_argument("--text", required=True)
-    parser.add_argument("--model", required=True, help="Caminho para o arquivo do modelo .onnx.")
-    parser.add_argument("--config", required=True, help="Caminho para o arquivo de configuração .json.")
+    parser.add_argument("--model", required=True)
+    parser.add_argument("--config", required=True)
     parser.add_argument("--output_file", required=True)
     args = parser.parse_args()
 
-    print(f"Carregando o modelo: {args.model}")
-    # Inicializa o TTS com os caminhos do modelo
-    tts = TTS(model_path=args.model, config_path=args.config)
+    print(f"Carregando modelo Piper: {args.model}")
+    
+    # A SINTAXE CORRETA, que descobrimos através da depuração
+    # O primeiro argumento é posicional, os outros são nomeados
+    voice = PiperVoice(args.model, config_path=args.config)
+    
     print("Modelo carregado.")
 
-    print(f"Gerando áudio para o arquivo: {args.output_file}")
-    # Gera o áudio para o arquivo
-    tts.tts_to_file(text=args.text, file_path=args.output_file)
+    print(f"Gerando áudio para: {args.output_file}")
+    with open(args.output_file, "wb") as audio_file:
+        voice.synthesize(args.text, audio_file)
     
     print("Geração de áudio concluída com sucesso.")
 

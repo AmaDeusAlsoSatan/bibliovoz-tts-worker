@@ -1,4 +1,4 @@
-TTS # A biblioteca oficial da Coqui
+piper-tts==1.2.0
 numpy
 scipy
 google-cloud-storage
