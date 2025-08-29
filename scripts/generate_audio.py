@@ -7,15 +7,15 @@ def main():
     parser = argparse.ArgumentParser(description="Gera áudio com Piper TTS.")
     parser.add_argument("--text", required=True)
     parser.add_argument("--model", required=True)
-    # O argumento --config não é mais necessário, a biblioteca o infere.
-    # parser.add_argument("--config", required=True) 
+    # O argumento --config é necessário como posicional
+    parser.add_argument("--config", required=True) 
     parser.add_argument("--output_file", required=True)
     args = parser.parse_args()
 
     print(f"Carregando modelo Piper: {args.model}")
     
-    # A inicialização foi corrigida. A biblioteca encontra o .json sozinha.
-    voice = PiperVoice(args.model)
+    # CORREÇÃO FINAL: Passando o config como segundo argumento posicional
+    voice = PiperVoice(args.model, args.config)
     
     print("Modelo carregado.")
 
