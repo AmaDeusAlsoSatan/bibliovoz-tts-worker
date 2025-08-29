@@ -33,7 +33,6 @@ jobs:
           python scripts/generate_audio.py \
             --text "${{ github.event.inputs.chapterText }}" \
             --model "models/${{ github.event.inputs.voiceModel }}.onnx" \
-            --config "models/${{ github.event.inputs.voiceModel }}.onnx.json" \
             --output_file "audio_output/${{ github.event.inputs.chapterId }}.wav"
 
       - name: Upload Audio to GitHub LFS
